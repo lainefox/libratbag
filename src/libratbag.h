@@ -515,6 +515,18 @@ ratbag_device_commit(struct ratbag_device *device);
 /**
  * @ingroup device
  *
+ * Poll the device for hardware status changes (such as active DPI stage changes
+ * triggered by physical buttons on devices that do not send unsolicited USB events).
+ *
+ * @param device A previously initialized ratbag device
+ * @return 1 if hardware state changed, 0 if unchanged, < 0 on error
+ */
+int
+ratbag_device_poll(struct ratbag_device *device);
+
+/**
+ * @ingroup device
+ *
  * Return the number of profiles supported by this device.
  *
  * Note that the number of profiles available may be different to the number

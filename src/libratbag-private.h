@@ -206,6 +206,13 @@ struct ratbag_driver {
 	 */
 	int (*set_active_profile)(struct ratbag_device *device, unsigned int index);
 
+	/**
+	 * Optional polling callback for devices that do not send asynchronous
+	 * USB reports when internal hardware state (e.g. DPI stage) changes.
+	 * Returns 1 if state changed, 0 if unchanged, < 0 on error.
+	 */
+	int (*poll)(struct ratbag_device *device);
+
 	/* private */
 	int (*test_probe)(struct ratbag_device *device, const void *data);
 

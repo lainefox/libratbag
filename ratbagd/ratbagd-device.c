@@ -221,6 +221,33 @@ static int ratbagd_device_commit(sd_bus_message *m,
 	return 0;
 }
 
+static void ratbagd_device_resync_pending(void *data)
+{
+	struct ratbagd_device *device = data;
+
+	ratbag_device_poll(device->lib_device);
+	ratbagd_for_each_profile_signal(device->ctx->bus,
+					device,
+					ratbagd_profile_resync);
+
+	ratbagd_device_unref(device);
+}
+
+static int ratbagd_device_resync_method(sd_bus_message *m,
+					void *userdata,
+					sd_bus_error *error)
+{
+	struct ratbagd_device *device = userdata;
+
+	ratbagd_schedule_task(device->ctx,
+			      ratbagd_device_resync_pending,
+			      ratbagd_device_ref(device));
+
+	CHECK_CALL(sd_bus_reply_method_return(m, "u", 0));
+
+	return 0;
+}
+
 static int
 ratbagd_device_get_model(sd_bus *bus,
 			 const char *path,
@@ -271,6 +298,7 @@ const sd_bus_vtable ratbagd_device_vtable[] = {
 	SD_BUS_PROPERTY("FirmwareVersion", "s", ratbagd_device_get_firmware_version, 0, SD_BUS_VTABLE_PROPERTY_CONST),
 	SD_BUS_PROPERTY("Profiles", "ao", ratbagd_device_get_profiles, 0, SD_BUS_VTABLE_PROPERTY_CONST),
 	SD_BUS_METHOD("Commit", "", "u", ratbagd_device_commit, SD_BUS_VTABLE_UNPRIVILEGED),
+	SD_BUS_METHOD("Resync", "", "u", ratbagd_device_resync_method, SD_BUS_VTABLE_UNPRIVILEGED),
 	SD_BUS_SIGNAL("Resync", "", 0),
 	SD_BUS_VTABLE_END,
 };
@@ -569,8 +597,8 @@ int ratbagd_for_each_profile_signal(sd_bus *bus,
 {
 	int rc = 0;
 
-	for (size_t i = 0; rc == 0 && i < device->n_profiles; i++)
+	for (size_t i = 0; rc >= 0 && i < device->n_profiles; i++)
 		rc = func(bus, device->profiles[i]);
 
-	return rc;
+	return rc < 0 ? rc : 0;
 }

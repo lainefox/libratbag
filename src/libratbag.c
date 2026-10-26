@@ -893,6 +893,15 @@ ratbag_device_commit(struct ratbag_device *device)
 	return RATBAG_SUCCESS;
 }
 
+LIBRATBAG_EXPORT int
+ratbag_device_poll(struct ratbag_device *device)
+{
+	if (!device || !device->driver || !device->driver->poll)
+		return 0;
+
+	return device->driver->poll(device);
+}
+
 LIBRATBAG_EXPORT enum ratbag_error_code
 ratbag_profile_set_active(struct ratbag_profile *profile)
 {
