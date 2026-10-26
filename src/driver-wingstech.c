@@ -342,9 +342,8 @@ static const uint8_t wt_magic_bindings[3] = { 0x02, 0x02, 0xa5 };
 
 /* Slot offsets that hold a permanent factory resident. Writing a commit frame
  * without these clears them, so the cached table is always echoed back.
- * Slot 47 is the single CPI button: the firmware owns it and rejects writes,
- * which is why a commit has to carry its (empty) record through untouched. */
-static const unsigned int wt_resident_slots[] = { 32, 37, 47, 52 };
+ * Slots 32/37 are wheel up/down and slot 52 is the LED-cycle resident. */
+static const unsigned int wt_resident_slots[] = { 32, 37, 52 };
 
 /* The six physical button slots, in logical order. Slots 32/37 are wheel
  * up/down and slot 52 is the LED-cycle resident; these are preserved verbatim
@@ -911,6 +910,10 @@ wt_write_button(struct ratbag_device *device, struct ratbag_button *button)
 			break;
 		case RATBAG_BUTTON_ACTION_SPECIAL_WHEEL_DOWN:
 			newrec[0] = WT_TAG_SCROLL_DOWN;
+			break;
+		case RATBAG_BUTTON_ACTION_SPECIAL_RESOLUTION_CYCLE_UP:
+			/* All-zero record restores native firmware CPI cycle on slot 47 */
+			memset(newrec, 0, sizeof(newrec));
 			break;
 		default:
 			log_debug(device->ratbag,
