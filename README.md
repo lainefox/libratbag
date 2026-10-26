@@ -13,6 +13,11 @@ Roccat, Steelseries. See [the device
 files](https://github.com/libratbag/libratbag/tree/master/data/devices) for
 a complete list of supported devices.
 
+This fork adds driver support for **Wings Tech 2203** devices, specifically
+the **Aqirys TGA Wired** gaming mouse (`usb:2ea8:2203`), supporting up to 7 DPI
+stages (PixArt PMW3389 sensor), 6 physical button remappings, polling rate
+reporting, and onboard RGB lighting effects.
+
 Users interact through a GUI like
 [Piper](https://github.com/libratbag/piper/). For developers, the
 `ratbagctl` tool is the prime tool for debugging.
