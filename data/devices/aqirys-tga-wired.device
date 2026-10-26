@@ -1,0 +1,5 @@
+[Device]
+Name=Aqirys TGA Wired
+DeviceMatch=usb:2ea8:2203
+DeviceType=mouse
+Driver=wings-tech
