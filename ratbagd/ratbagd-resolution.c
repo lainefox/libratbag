@@ -52,7 +52,6 @@ int ratbagd_resolution_resync(sd_bus *bus,
 					      resolution->path,
 					      RATBAGD_NAME_ROOT ".Resolution",
 					      "Resolution",
-					      "ReportRate",
 					      "IsActive",
 					      "IsDefault",
 					      "IsDisabled",
@@ -60,7 +59,7 @@ int ratbagd_resolution_resync(sd_bus *bus,
 }
 
 static int ratbagd_resolution_active_signal_cb(sd_bus *bus,
-						struct ratbagd_resolution *resolution)
+					       struct ratbagd_resolution *resolution)
 {
 	/* FIXME: we should cache is_active and only send the signal for
 	 * those resolutions where it changed */

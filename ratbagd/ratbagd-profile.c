@@ -1057,10 +1057,10 @@ int ratbagd_for_each_resolution_signal(sd_bus *bus,
 {
 	int rc = 0;
 
-	for (size_t i = 0; rc == 0 && i < profile->n_resolutions; i++)
+	for (size_t i = 0; rc >= 0 && i < profile->n_resolutions; i++)
 		rc = func(bus, profile->resolutions[i]);
 
-	return rc;
+	return rc < 0 ? rc : 0;
 }
 
 int ratbagd_for_each_button_signal(sd_bus *bus,
@@ -1070,10 +1070,10 @@ int ratbagd_for_each_button_signal(sd_bus *bus,
 {
 	int rc = 0;
 
-	for (size_t i = 0; rc == 0 && i < profile->n_buttons; i++)
+	for (size_t i = 0; rc >= 0 && i < profile->n_buttons; i++)
 		rc = func(bus, profile->buttons[i]);
 
-	return rc;
+	return rc < 0 ? rc : 0;
 }
 
 int ratbagd_for_each_led_signal(sd_bus *bus,
@@ -1083,10 +1083,10 @@ int ratbagd_for_each_led_signal(sd_bus *bus,
 {
 	int rc = 0;
 
-	for (size_t i = 0; rc == 0 && i < profile->n_leds; i++)
+	for (size_t i = 0; rc >= 0 && i < profile->n_leds; i++)
 		rc = func(bus, profile->leds[i]);
 
-	return rc;
+	return rc < 0 ? rc : 0;
 }
 
 
@@ -1104,6 +1104,7 @@ int ratbagd_profile_resync(sd_bus *bus,
 					      "Buttons",
 					      "Leds",
 					      "IsActive",
+					      "ReportRate",
 					      NULL);
 }
 
